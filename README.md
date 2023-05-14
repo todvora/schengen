@@ -1,4 +1,9 @@
 # Temporary Reintroduction of Border Control
+
+In a hurry? [Jump straight to the animation](https://www.tomas-dvorak.cz/schengen/).
+
+## What is this about?
+
 This repository provides parsed and cleaned list of the temporary reintroduction of border control as published on [Temporary Reintroduction of Border Control](https://home-affairs.ec.europa.eu/policies/schengen-borders-and-visa/schengen-area/temporary-reintroduction-border-control_en)
 
 This page provides all the entries in one PDF file. This file is hard to parse, doesn't use any standardized format for dates and is impossible to copy&paste for further processing. 
