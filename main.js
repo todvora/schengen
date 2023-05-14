@@ -37,6 +37,37 @@ const schengenCountries = [
   "Switzerland"
 ];
 
+const flags = {
+  "Austria": "🇦🇹",
+  "Belgium": "🇧🇪",
+  "Croatia": "🇭🇷",
+  "Czechia": "🇨🇿",
+  "Denmark": "🇩🇰",
+  "Estonia": "🇪🇪",
+  "Finland": "🇫🇮",
+  "France": "🇫🇷",
+  "Germany": "🇩🇪",
+  "Greece": "🇬🇷",
+  "Hungary": "🇭🇺",
+  "Iceland": "🇮🇸",
+  "Italy": "🇮🇹",
+  "Latvia": "🇱🇻",
+  "Liechtenstein": "🇱🇮",
+  "Lithuania": "🇱🇹",
+  "Luxembourg": "🇱🇺",
+  "Malta": "🇲🇹",
+  "Netherlands": "🇳🇱",
+  "Norway": "🇳🇴",
+  "Poland": "🇵🇱",
+  "Portugal": "🇵🇹",
+  "Slovakia": "🇸🇰",
+  "Slovenia": "🇸🇮",
+  "Spain": "🇪🇸",
+  "Sweden": "🇸🇪",
+  "Switzerland": "🇨🇭"
+};
+
+
 function convertData(data) {
   return data.slice(1).reverse()
             .map(item => parseItem(item));
@@ -209,7 +240,7 @@ function formatTooltip(entry) {
     const duration = entry.till.diff(entry.from, 'days');
     const reason = highlightCountries(entry.reason);
     const date = `${entry.from.format("DD.MM.YYYY")} - ${entry.till.format("DD.MM.YYYY")}`;
-    return `<div><h3>#${entry.nb}, ${duration} days</h3><p>${date}</p><p>${reason}</p></div>`;
+    return `<div><h3>${flags[entry.country]} #${entry.nb}, ${duration} days</h3><p>${date}</p><p>${reason}</p></div>`;
 }
 
 function highlightCountries(reason) {
