@@ -1,5 +1,5 @@
 window.addEventListener("load", (event) => {
-  fetch('shengen.csv?v=' + Math.random())
+  fetch('schengen.csv?v=' + Math.random())
     .then((response) => response.text())
     .then((data) => parseCSV(data))
     .then((data) => convertData(data))
