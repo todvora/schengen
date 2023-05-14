@@ -9,6 +9,7 @@ window.addEventListener("load", (event) => {
 const schengenCountries = [
   "Austria",
   "Belgium",
+  "Croatia",
   "Czechia",
   "Denmark",
   "Estonia",
