@@ -10,3 +10,5 @@ body {
 .attribution {
     font-size:80;
 }
+
+.google-visualization-tooltip { width:300px; padding:10px; }

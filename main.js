@@ -3,7 +3,8 @@ window.addEventListener("load", (event) => {
     .then((response) => response.text())
     .then((data) => parseCSV(data))
     .then((data) => convertData(data))
-    .then((data) => renderCsv(data));
+    .then((data) => renderCsv(data))
+    .then((data) => drawChart(data));
 });
 
 const schengenCountries = [
@@ -47,8 +48,8 @@ function renderCsv(entries) {
         const minDate = moment.min(entries.map(d => d.from))
         const maxDate = moment.max(entries.map(d => d.till))
 
-        console.log('First date', minDate);
-        console.log('Last date', maxDate);
+        //console.log('First date', minDate);
+        //console.log('Last date', maxDate);
 
         const intervalDays = maxDate.diff(minDate, 'days');
 
@@ -76,6 +77,8 @@ function renderCsv(entries) {
         setTimeout(() => {
             intervalID = setTimeout(showTime, 100);
         }, 3000);
+
+        return entries;
 
 }
 
@@ -157,3 +160,64 @@ function parseCSV(str) {
 }
 
 
+
+google.charts.load('current', {'packages':['timeline']});
+
+function drawChart(entries) {
+  var container = document.getElementById('timeline-chart');
+
+  var chart = new google.visualization.Timeline(container);
+
+  var dataTable = new google.visualization.DataTable();
+  dataTable.addColumn({ type: 'string', id: 'Country' });
+  dataTable.addColumn({ type: 'string', id: 'Notification' });
+  dataTable.addColumn({type: 'string', role: 'tooltip'});
+  dataTable.addColumn({ type: 'date', id: 'Start' });
+  dataTable.addColumn({ type: 'date', id: 'End' });
+
+  const rows = entries.map(entry => {
+    return [entry.country,entry.nb, formatTooltip(entry), entry.from.toDate(), entry.till.toDate()];
+  })
+
+  dataTable.addRows(rows);
+
+  dataTable.sort([{column: 0}]);
+
+  /*
+
+  dataTable.addRows([
+    ['Task 1', 'Role 1', new Date(2023, 0, 1), new Date(2023, 0, 5)],
+    ['Task 2', 'Role 2', new Date(2023, 0, 3), new Date(2023, 0, 10)],
+    ['Task 3', 'Role 3', new Date(2023, 0, 6), new Date(2023, 0, 15)]
+  ]);
+
+  */
+
+  var options = {
+    timeline: { colorByRowLabel: true },
+    tooltip: { isHtml: true },
+    hAxis: {
+      format: 'dd.MM.yyyy'
+    },
+     backgroundColor: '#f7f7f7'
+  };
+
+  chart.draw(dataTable, options);
+}
+
+function formatTooltip(entry) {
+    const duration = entry.till.diff(entry.from, 'days');
+    const reason = highlightCountries(entry.reason);
+    const date = `${entry.from.format("DD.MM.YYYY")} - ${entry.till.format("DD.MM.YYYY")}`;
+    return `<div><h3>#${entry.nb}, ${duration} days</h3><p>${date}</p><p>${reason}</p></div>`;
+}
+
+function highlightCountries(reason) {
+    var replaced = reason;
+    schengenCountries.forEach(country => {replaced = replaced.replaceAll(country, `<strong>${country}</strong>`);})
+    return replaced
+        .replace(/ports with ferry connections/ig, '<strong>ports with ferry connections</strong>')
+        .replace(/all internal borders/ig, '<strong>all internal borders</strong>')
+        .replace(/land border/ig, '<strong>land border</strong>')
+
+}
