@@ -68,14 +68,19 @@ function renderCsv(entries) {
                 } else {
                     setTimeout(showTime(10));
                 }
+            } else {
+                clearTimeout(intervalID);
             }
         }
-        var intervalID = setTimeout(showTime, 100);
+        setTimeout(() => {
+            intervalID = setTimeout(showTime, 100);
+        }, 3000);
+
 }
 
 function highlightMatchingCountries(currentDate, entries) {
 
-    document.getElementById("currentDate").innerHTML = currentDate.format("[Today is] DD.MM.YYYY");
+    document.getElementById("currentDate").innerHTML = currentDate.format("DD.MM.YYYY");
 
     const matching = entries.filter(entry => currentDate.isSameOrAfter(entry.from) && currentDate.isSameOrBefore(entry.till));
     const countries = matching.map(m => m.country);
