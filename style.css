@@ -1,14 +1,18 @@
 body {
-   text-align:center;
-}
-
-#currentDate {
-    font-size:130;
-    font-weight:bold;
+   text-align:left;
 }
 
 .attribution {
+
+}
+
+body {
+    margin:2em;
     font-size:80;
 }
 
-.google-visualization-tooltip { width:300px; padding:10px; }
+.google-visualization-tooltip { max-width:300px; text-align:center;}
+
+.tooltip {
+    padding:5px;
+}

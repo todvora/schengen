@@ -3,41 +3,10 @@ window.addEventListener("load", (event) => {
     .then((response) => response.text())
     .then((data) => parseCSV(data))
     .then((data) => convertData(data))
-    .then((data) => renderCsv(data))
     .then((data) => drawChart(data));
 });
 
-const schengenCountries = [
-  "Austria",
-  "Belgium",
-  "Croatia",
-  "Czechia",
-  "Denmark",
-  "Estonia",
-  "Finland",
-  "France",
-  "Germany",
-  "Greece",
-  "Hungary",
-  "Iceland",
-  "Italy",
-  "Latvia",
-  "Liechtenstein",
-  "Lithuania",
-  "Luxembourg",
-  "Malta",
-  "Netherlands",
-  "Norway",
-  "Poland",
-  "Portugal",
-  "Slovakia",
-  "Slovenia",
-  "Spain",
-  "Sweden",
-  "Switzerland"
-];
-
-const flags = {
+const schengenCountries = {
   "Austria": "🇦🇹",
   "Belgium": "🇧🇪",
   "Croatia": "🇭🇷",
@@ -73,83 +42,17 @@ function convertData(data) {
             .map(item => parseItem(item));
 }
 
-function renderCsv(entries) {
-        //console.log(entries);
-
-        const minDate = moment.min(entries.map(d => d.from))
-        const maxDate = moment.max(entries.map(d => d.till))
-
-        //console.log('First date', minDate);
-        //console.log('Last date', maxDate);
-
-        const intervalDays = maxDate.diff(minDate, 'days');
-
-        var intervalID;
-        var currentDate = minDate;
-        var oldCountriesCount = 0;
-
-        function showTime() {
-            currentDate = currentDate.add(1, 'day');
-
-            const countriesCount = highlightMatchingCountries(currentDate, entries);
-            var changed = oldCountriesCount != countriesCount;
-            oldCountriesCount = countriesCount;
-
-            if(!currentDate.isSameOrAfter(maxDate)) {
-                if(changed) {
-                    setTimeout(showTime, 100);
-                } else {
-                    setTimeout(showTime(10));
-                }
-            } else {
-                clearTimeout(intervalID);
-            }
-        }
-        setTimeout(() => {
-            intervalID = setTimeout(showTime, 100);
-        }, 3000);
-
-        return entries;
-
-}
-
-function highlightMatchingCountries(currentDate, entries) {
-
-    document.getElementById("currentDate").innerHTML = currentDate.format("DD.MM.YYYY");
-
-    const matching = entries.filter(entry => currentDate.isSameOrAfter(entry.from) && currentDate.isSameOrBefore(entry.till));
-    const countries = matching.map(m => m.country);
-
-    const map = document.getElementById('map');
-    const children = map.children;
-    for (var i = 0; i < children.length; i++) {
-      const country = children[i];
-      const countryName = country.getAttribute('name');
-      if(countries.includes(countryName)) {
-        country.style.fill = 'red';
-      } else if(schengenCountries.includes(countryName)) {
-        country.style.fill = '#e6ffe3';
-      } else {
-        country.style.fill = '#ececec';
-      }
-    }
-    return countries.length;
-}
-
-
 function parseItem(item) {
     const obj = {};
     obj.nb = item[0];
     obj.country = item[1];
     obj.from = moment(item[2], "DD/MM/YYYY");
     obj.till = moment(item[3], "DD/MM/YYYY");
-    obj.duration = item[4];
-    obj.reason = item[5];
+    obj.reason = item[4];
 
     if(!obj.from.isValid()) {
         console.log(obj);
     }
-
     return obj;
 }
 
@@ -211,18 +114,7 @@ function drawChart(entries) {
   })
 
   dataTable.addRows(rows);
-
   dataTable.sort([{column: 0}]);
-
-  /*
-
-  dataTable.addRows([
-    ['Task 1', 'Role 1', new Date(2023, 0, 1), new Date(2023, 0, 5)],
-    ['Task 2', 'Role 2', new Date(2023, 0, 3), new Date(2023, 0, 10)],
-    ['Task 3', 'Role 3', new Date(2023, 0, 6), new Date(2023, 0, 15)]
-  ]);
-
-  */
 
   var options = {
     timeline: { colorByRowLabel: true },
@@ -240,12 +132,16 @@ function formatTooltip(entry) {
     const duration = entry.till.diff(entry.from, 'days');
     const reason = highlightCountries(entry.reason);
     const date = `${entry.from.format("DD.MM.YYYY")} - ${entry.till.format("DD.MM.YYYY")}`;
-    return `<div><h3>${flags[entry.country]} #${entry.nb}, ${duration} days</h3><p>${date}</p><p>${reason}</p></div>`;
+    return `<div class="tooltip"><h3>${schengenCountries[entry.country]} #${entry.nb}, ${duration} days</h3><p>${date}</p><p>${reason}</p></div>`;
 }
 
 function highlightCountries(reason) {
     var replaced = reason;
-    schengenCountries.forEach(country => {replaced = replaced.replaceAll(country, `<strong>${country}</strong>`);})
+
+    for (const country in schengenCountries) {
+        replaced = replaced.replaceAll(country, `<strong>${country}</strong>`);
+    }
+
     return replaced
         .replace(/ports with ferry connections/ig, '<strong>ports with ferry connections</strong>')
         .replace(/all internal borders/ig, '<strong>all internal borders</strong>')
