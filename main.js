@@ -33,7 +33,8 @@ const schengenCountries = {
   "Slovenia": "🇸🇮",
   "Spain": "🇪🇸",
   "Sweden": "🇸🇪",
-  "Switzerland": "🇨🇭"
+  "Switzerland": "🇨🇭",
+  "The Netherlands": "🇳🇱"
 };
 
 
